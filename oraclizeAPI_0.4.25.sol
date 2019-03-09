@@ -3,23 +3,14 @@
 /*
 Copyright (c) 2015-2016 Oraclize SRL
 Copyright (c) 2016 Oraclize LTD
-
-
-
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
 in the Software without restriction, including without limitation the rights
 to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
 copies of the Software, and to permit persons to whom the Software is
 furnished to do so, subject to the following conditions:
-
-
-
 The above copyright notice and this permission notice shall be included in
 all copies or substantial portions of the Software.
-
-
-
 THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
 IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
 FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT.  IN NO EVENT SHALL THE
@@ -54,7 +45,6 @@ contract OraclizeAddrResolverI {
 
 /*
 Begin solidity-cborutils
-
 https://github.com/smartcontractkit/solidity-cborutils
 
 MIT License
@@ -67,10 +57,8 @@ in the Software without restriction, including without limitation the rights
 to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
 copies of the Software, and to permit persons to whom the Software is
 furnished to do so, subject to the following conditions:
-
 The above copyright notice and this permission notice shall be included in all
 copies or substantial portions of the Software.
-
 THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
 IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
 FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
@@ -128,13 +116,13 @@ library Buffer {
         uint src;
         uint len = data.length;
         assembly {
-            // Memory address of the buffer data
+        // Memory address of the buffer data
             let bufptr := mload(buf)
-            // Length of existing buffer data
+        // Length of existing buffer data
             let buflen := mload(bufptr)
-            // Start address = buffer address + buffer length + sizeof(buffer length)
+        // Start address = buffer address + buffer length + sizeof(buffer length)
             dest := add(add(bufptr, buflen), 32)
-            // Update buffer length
+        // Update buffer length
             mstore(bufptr, add(buflen, mload(data)))
             src := add(data, 32)
         }
@@ -172,14 +160,14 @@ library Buffer {
         }
 
         assembly {
-            // Memory address of the buffer data
+        // Memory address of the buffer data
             let bufptr := mload(buf)
-            // Length of existing buffer data
+        // Length of existing buffer data
             let buflen := mload(bufptr)
-            // Address = buffer address + buffer length + sizeof(buffer length)
+        // Address = buffer address + buffer length + sizeof(buffer length)
             let dest := add(add(bufptr, buflen), 32)
             mstore8(dest, data)
-            // Update buffer length
+        // Update buffer length
             mstore(bufptr, add(buflen, 1))
         }
     }
@@ -198,14 +186,14 @@ library Buffer {
 
         uint mask = 256 ** len - 1;
         assembly {
-            // Memory address of the buffer data
+        // Memory address of the buffer data
             let bufptr := mload(buf)
-            // Length of existing buffer data
+        // Length of existing buffer data
             let buflen := mload(bufptr)
-            // Address = buffer address + buffer length + sizeof(buffer length) + len
+        // Address = buffer address + buffer length + sizeof(buffer length) + len
             let dest := add(add(bufptr, buflen), len)
             mstore(dest, or(and(mload(dest), not(mask)), data))
-            // Update buffer length
+        // Update buffer length
             mstore(bufptr, add(buflen, len))
         }
         return buf;
@@ -318,8 +306,8 @@ contract usingOraclize {
     }
 
     function oraclize_setNetwork(uint8 networkID) internal returns(bool){
-      return oraclize_setNetwork();
-      networkID; // silence the warning and remain backwards compatible
+        return oraclize_setNetwork();
+        networkID; // silence the warning and remain backwards compatible
     }
     function oraclize_setNetwork() internal returns(bool){
         if (getCodeSize(0x1d3B2638a7cC9f2CB3D298A3DA7a90B67E5506ed)>0){ //mainnet
@@ -361,12 +349,12 @@ contract usingOraclize {
         __callback(myid, result, new bytes(0));
     }
     function __callback(bytes32 myid, string result, bytes proof) public {
-      return;
-      // Following should never be reached with a preceding return, however
-      // this is just a placeholder function, ideally meant to be defined in
-      // child contract when proofs are used
-      myid; result; proof; // Silence compiler warnings
-      oraclize = OraclizeI(0); // Additional compiler silence about making function pure/view. 
+        return;
+        // Following should never be reached with a preceding return, however
+        // this is just a placeholder function, ideally meant to be defined in
+        // child contract when proofs are used
+        myid; result; proof; // Silence compiler warnings
+        oraclize = OraclizeI(0); // Additional compiler silence about making function pure/view.
     }
 
     function oraclize_getPrice(string datasource) oraclizeAPI internal returns (uint){
@@ -877,7 +865,7 @@ contract usingOraclize {
         for (uint i=0; i<bresult.length; i++){
             if ((bresult[i] >= 48)&&(bresult[i] <= 57)){
                 if (decimals){
-                   if (_b == 0) break;
+                    if (_b == 0) break;
                     else _b--;
                 }
                 mint *= 10;
@@ -950,9 +938,9 @@ contract usingOraclize {
         bytes32 sessionKeyHash_bytes32 = oraclize_randomDS_getSessionPubKeyHash();
         assembly {
             mstore(unonce, 0x20)
-            // the following variables can be relaxed
-            // check relaxed random contract under ethereum-examples repo
-            // for an idea on how to override and replace comit hash vars
+        // the following variables can be relaxed
+        // check relaxed random contract under ethereum-examples repo
+        // for an idea on how to override and replace comit hash vars
             mstore(add(unonce, 0x20), xor(blockhash(sub(number, 1)), xor(coinbase, timestamp)))
             mstore(sessionKeyHash, 0x20)
             mstore(add(sessionKeyHash, 0x20), sessionKeyHash_bytes32)
@@ -1174,8 +1162,8 @@ contract usingOraclize {
             mstore(add(size, 64), r)
             mstore(add(size, 96), s)
 
-            // NOTE: we can reuse the request memory because we deal with
-            //       the return code
+        // NOTE: we can reuse the request memory because we deal with
+        //       the return code
             ret := call(3000, 1, 0, size, 128, size, 32)
             addr := mload(size)
         }
@@ -1190,7 +1178,7 @@ contract usingOraclize {
         uint8 v;
 
         if (sig.length != 65)
-          return (false, 0);
+            return (false, 0);
 
         // The signature format is a compact form of:
         //   {bytes32 r}{bytes32 s}{uint8 v}
@@ -1199,15 +1187,15 @@ contract usingOraclize {
             r := mload(add(sig, 32))
             s := mload(add(sig, 64))
 
-            // Here we are loading the last 32 bytes. We exploit the fact that
-            // 'mload' will pad with zeroes if we overread.
-            // There is no 'mload8' to do this, but that would be nicer.
+        // Here we are loading the last 32 bytes. We exploit the fact that
+        // 'mload' will pad with zeroes if we overread.
+        // There is no 'mload8' to do this, but that would be nicer.
             v := byte(0, mload(add(sig, 96)))
 
-            // Alternative solution:
-            // 'byte' is not working due to the Solidity parser, so lets
-            // use the second best option, 'and'
-            // v := and(mload(add(sig, 65)), 255)
+        // Alternative solution:
+        // 'byte' is not working due to the Solidity parser, so lets
+        // use the second best option, 'and'
+        // v := and(mload(add(sig, 65)), 255)
         }
 
         // albeit non-transactional signatures are not specified by the YP, one would expect it
@@ -1216,7 +1204,7 @@ contract usingOraclize {
         // geth uses [0, 1] and some clients have followed. This might change, see:
         //  https://github.com/ethereum/go-ethereum/issues/2053
         if (v < 27)
-          v += 27;
+            v += 27;
 
         if (v != 27 && v != 28)
             return (false, 0);
